@@ -1,15 +1,19 @@
 # Tiltfile
 # Hotel Management System Development Environment
+allow_k8s_contexts('k3d-k3s-cluster')
 
 # Load Kubernetes YAML files
 k8s_yaml([
-    'k8s/namespace.yaml',
-    'k8s/postgres.yaml',
-    # 'k8s/mongodb.yaml', 
-    # 'k8s/redis.yaml',
-    # 'k8s/kafka.yaml',
-    'k8s/keycloak.yaml',
-    'k8s/kong.yaml'
+    'k8s/development/namespace.yaml',
+    'k8s/development/configmap.yaml',
+    'k8s/development/postgres.yaml',
+    'k8s/development/secrets.yaml',
+    # 'k8s/development/mongodb.yaml',
+    # 'k8s/development/redis.yaml',
+    # 'k8s/development/kafka.yaml',
+    # 'k8s/development/keycloak.yaml',
+    # 'k8s/development/kong.yaml',
+  
 ])
 
 # User Service (Go)
@@ -23,8 +27,8 @@ docker_build(
     ]
 )
 
-k8s_yaml('services/user-service/k8s.yaml')
-k8s_resource('user-service', port_forwards='8001:8080')
+k8s_yaml('k8s/development/user-service.yaml')
+k8s_resource('user-service', port_forwards='8001:8001', labels='services')
 
 # Booking Service (Python)
 # docker_build(
@@ -83,24 +87,24 @@ k8s_resource('user-service', port_forwards='8001:8080')
 # k8s_resource('notification-service', port_forwards='8005:8080')
 
 # Resource Groups for better organization
-k8s_resource('postgres', resource_deps=['namespace'])
+# k8s_resource('user-db', resource_deps=['hotel-management-dev'])
 # k8s_resource('mongodb', resource_deps=['namespace'])
 # k8s_resource('redis', resource_deps=['namespace'])
 # k8s_resource('kafka', resource_deps=['namespace', 'redis'])
-k8s_resource('keycloak', resource_deps=['namespace', 'postgres'])
-k8s_resource('kong', resource_deps=['namespace', 'postgres'])
+# k8s_resource('keycloak', resource_deps=['namespace', 'postgres'])
+# k8s_resource('kong', resource_deps=['namespace', 'postgres'])
 
 # Services depend on infrastructure
-k8s_resource('user-service', resource_deps=['postgres', 'keycloak', 'kong'])
+# k8s_resource('user-service', resource_deps=['postgres', 'keycloak', 'kong'])
 # k8s_resource('booking-service', resource_deps=['postgres', 'kafka', 'kong'])
 # k8s_resource('room-service', resource_deps=['mongodb', 'kafka', 'kong'])
 # k8s_resource('payment-service', resource_deps=['postgres', 'kafka', 'kong'])
 # k8s_resource('notification-service', resource_deps=['postgres', 'kafka', 'kong'])
 
 # Port forwards for external access
-k8s_resource('kong', port_forwards='8080:8000')
-k8s_resource('keycloak', port_forwards='8081:8080')
-k8s_resource('postgres', port_forwards='5432:5432')
+# k8s_resource('kong', port_forwards='8080:8000')
+# k8s_resource('keycloak', port_forwards='8081:8080')
+# k8s_resource('postgres', port_forwards='5432:5432')
 # k8s_resource('mongodb', port_forwards='27017:27017')
 # k8s_resource('redis', port_forwards='6379:6379')
 # k8s_resource('kafka', port_forwards='9092:9092')
@@ -137,8 +141,8 @@ k8s_resource('postgres', port_forwards='5432:5432')
 
 print("Hotel Management System - Development Environment")
 print("=================================================")
-print("Kong Gateway: http://localhost:8080")
-print("Keycloak: http://localhost:8081")
+# print("Kong Gateway: http://localhost:8080")
+# print("Keycloak: http://localhost:8081")
 print("User Service: http://localhost:8001")
 # print("Booking Service: http://localhost:8002") 
 # print("Room Service: http://localhost:8003")

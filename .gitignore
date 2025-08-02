@@ -8,3 +8,7 @@
 *.iml
 *.iws
 out/
+
+# Secrets
+.env
+secrets.yaml

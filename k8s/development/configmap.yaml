@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: hotel-management-dev
+data:
+  APP_NAME: Hotel Management System
+  APP_DESCRIPTION: A simple hotel management system
+  ENVIRONMENT: development
+  # PORT
+  KONG_PORT: ":8080"
+  KEYCLOAK_PORT: ":8081"
+  USER_SERVICE_PORT: ":8001"
+  BOOKING_SERVICE_PORT: ":8002"
+  ROOM_SERVICE_PORT: ":8003"
+  PAYMENT_SERVICE_PORT: ":8004"
+  NOTIFICATION_SERVICE_PORT: ":8005"
+  POSTGRES_USER_PORT: ":5432"
+  MONGODB_PORT: ":27017"
+  REDIS_PORT: ":6379"
+  KAFKA_PORT: ":9092"
+  # DB Name
+  DB_USER_NAME: users
+
+
