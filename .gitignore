@@ -1,0 +1,10 @@
+# VS Code
+.vscode/
+
+# JetBrains IDEs (e.g., IntelliJ IDEA, PyCharm, WebStorm, etc.)
+.idea/
+
+# Optional: JetBrains IDE-specific workspace files
+*.iml
+*.iws
+out/
