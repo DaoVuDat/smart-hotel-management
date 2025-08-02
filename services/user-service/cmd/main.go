@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var HttpPort = config.GetEnv("HTTP_PORT", "8080")
+var HttpPort = config.GetEnv("HTTP_PORT", "8001")
 
 func main() {
 	_ = config.Load()
