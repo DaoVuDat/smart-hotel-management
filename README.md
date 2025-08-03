@@ -133,6 +133,7 @@ hotel-management-system/
 │   │   │   ├── api/
 │   │   │   ├── domain/
 │   │   │   ├── repository/
+│   │   │   ├── db/
 │   │   │   ├── service/
 │   │   │   └── config/
 │   │   ├── proto/

@@ -19,7 +19,3 @@ data:
   MONGODB_PORT: ":27017"
   REDIS_PORT: ":6379"
   KAFKA_PORT: ":9092"
-  # DB Name
-  DB_USER_NAME: users
-
-

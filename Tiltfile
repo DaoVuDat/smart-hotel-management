@@ -28,7 +28,11 @@ docker_build(
 )
 
 k8s_yaml('k8s/development/user-service.yaml')
-k8s_resource('user-service', port_forwards='8001:8001', labels='services')
+k8s_resource(
+    'user-service', 
+    port_forwards='8001:8001', 
+    labels='services',
+    )
 
 # Booking Service (Python)
 # docker_build(
@@ -86,8 +90,25 @@ k8s_resource('user-service', port_forwards='8001:8001', labels='services')
 # k8s_yaml('services/notification-service/k8s.yaml')
 # k8s_resource('notification-service', port_forwards='8005:8080')
 
+# Migrations
+docker_build(
+    'user-db-migration',
+    './services/user-service/migrations',
+    dockerfile='./services/user-service/migrations/Dockerfile',
+    live_update=[
+        sync('./services/user-service/migrations', '/app/migrations'),
+        run(
+            'echo "Migration file updated: you may want to re-run goose"',
+            trigger=['**/*.sql']
+        ),
+    ]
+)
+
+k8s_yaml('k8s/development/migrations.yaml')
+k8s_resource('user-db-migration', resource_deps=['user-db'], labels='migrations')
+
 # Resource Groups for better organization
-# k8s_resource('user-db', resource_deps=['hotel-management-dev'])
+k8s_resource('user-db', labels='infrastructure', port_forwards=['5432:5432'])
 # k8s_resource('mongodb', resource_deps=['namespace'])
 # k8s_resource('redis', resource_deps=['namespace'])
 # k8s_resource('kafka', resource_deps=['namespace', 'redis'])
@@ -95,6 +116,7 @@ k8s_resource('user-service', port_forwards='8001:8001', labels='services')
 # k8s_resource('kong', resource_deps=['namespace', 'postgres'])
 
 # Services depend on infrastructure
+k8s_resource('user-service', resource_deps=['user-db', 'user-db-migration'])
 # k8s_resource('user-service', resource_deps=['postgres', 'keycloak', 'kong'])
 # k8s_resource('booking-service', resource_deps=['postgres', 'kafka', 'kong'])
 # k8s_resource('room-service', resource_deps=['mongodb', 'kafka', 'kong'])

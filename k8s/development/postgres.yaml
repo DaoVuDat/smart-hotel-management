@@ -1,4 +1,5 @@
-# USER DB
+### USER DB
+# Service finds pods -> StatefulSet manages pods -> Pods are labeled consistently
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,7 +7,7 @@ metadata:
   namespace: hotel-management-dev
 spec:
   selector:
-    app: user-db
+    app: user-db # routes traffic to pods with this label
   ports:
     - name: user-db
       protocol: TCP
@@ -20,14 +21,15 @@ metadata:
   name: user-db
   namespace: hotel-management-dev
 spec:
+  serviceName: user-db # must match the name of the service above - links StatefulSet to the Service for DNS
   replicas: 1
   selector:
     matchLabels:
-      app: user-db
+      app: user-db # must match the label below - manages pods with this label
   template:
     metadata:
       labels:
-        app: user-db
+        app: user-db # labels applied to each pod created by the StatefulSet
     spec:
       containers:
         - name: user-db
@@ -54,9 +56,9 @@ spec:
                   key: PASSWORD
             - name: POSTGRES_DB
               valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: DB_USER_NAME
+                secretKeyRef:
+                  name: user-db
+                  key: DB_NAME
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           volumeMounts:
@@ -66,9 +68,9 @@ spec:
           livenessProbe:
             exec:
               command:
-              - sh
-              - -c
-              - pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
+                - sh
+                - -c
+                - pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
               initialDelaySeconds: 30
               timeoutSeconds: 5
               periodSeconds: 10
@@ -76,9 +78,9 @@ spec:
           readinessProbe:
             exec:
               command:
-              - sh
-              - -c
-              - pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
+                - sh
+                - -c
+                - pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
             initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 10

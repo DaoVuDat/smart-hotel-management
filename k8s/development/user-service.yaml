@@ -59,25 +59,33 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: USER_SERVICE_PORT
-            - name: DB_HOST
-              value: "user-db"
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: POSTGRES_USER_PORT
-            - name: DB_USER
+            - name: DB_URI
               valueFrom:
                 secretKeyRef:
                   name: user-db
-                  key: USERNAME
-            - name: DB_PASSWORD
+                  key: URI
+            - name: DB_MAX_CONN
               valueFrom:
                 secretKeyRef:
                   name: user-db
-                  key: PASSWORD
-            - name: DB_NAME
+                  key: MAX_CONNECTIONS
+            - name: DB_MAX_CONN_LIFE_TIME
               valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: DB_USER_NAME
+                secretKeyRef:
+                  name: user-db
+                  key: MAX_CONNECTION_LIFETIME
+            - name: DB_MIN_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: user-db
+                  key: MIN_CONNECTIONS
+            - name: DB_MAX_IDLE_TIME
+              valueFrom:
+                secretKeyRef:
+                  name: user-db
+                  key: MAX_CONNECTION_IDLE_TIME
+            - name: DB_HEALTH_CHECK_PERIOD
+              valueFrom:
+                secretKeyRef:
+                  name: user-db
+                  key: HEALTH_CHECK_PERIOD

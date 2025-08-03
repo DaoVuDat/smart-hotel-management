@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: user-db-migration
+  namespace: hotel-management-dev
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: goose
+          image: user-db-migration
+          command:
+            - goose
+            - -dir
+            - ./migrations/
+            - postgres
+            - $(DSN)
+            - up
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: user-db
+                  key: URI
+      restartPolicy: Never
