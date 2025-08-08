@@ -1,7 +1,7 @@
 # Tiltfile
 # Hotel Management System Development Environment
-allow_k8s_contexts('default')
-default_registry('localhost:5000')
+# allow_k8s_contexts('kind-kind')
+# default_registry('localhost:5001')
 
 # Extension
 load('ext://helm_resource', 'helm_resource') 
@@ -20,7 +20,7 @@ k8s_yaml([
   
 ])
 
-ns = 'hotel-management-dev'
+ns = 'hotel-dev'
 
 # k8s_resource(
 #     ns,
@@ -48,7 +48,6 @@ deploy_envoy_api_gateway()
 docker_build(
     'user-service-app',
     './services/user-service',
-    dockerfile='./services/user-service/Dockerfile',
     live_update=[
         sync('./services/user-service', '/app'),
         run('go build -o /app/main /app/cmd/main.go', trigger=['**/*.go'])
@@ -58,9 +57,6 @@ docker_build(
 k8s_yaml('k8s/development/user-service.yaml')
 k8s_resource(
     'user-service', 
-    port_forwards=[
-        '8001:8001',
-    ], 
     labels='services',
 )
 

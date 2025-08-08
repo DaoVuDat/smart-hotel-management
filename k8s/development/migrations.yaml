@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: user-db-migration
-  namespace: hotel-management-dev
+  namespace: hotel-dev
 spec:
   ttlSecondsAfterFinished: 100
   template:

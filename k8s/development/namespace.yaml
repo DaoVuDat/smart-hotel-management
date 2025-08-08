@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: hotel-management-dev
+  name: hotel-dev

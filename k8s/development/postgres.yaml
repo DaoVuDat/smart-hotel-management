@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-db
-  namespace: hotel-management-dev
+  namespace: hotel-dev
 spec:
   selector:
     app: user-db # routes traffic to pods with this label
@@ -19,7 +19,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: user-db
-  namespace: hotel-management-dev
+  namespace: hotel-dev
 spec:
   serviceName: user-db # must match the name of the service above - links StatefulSet to the Service for DNS
   replicas: 1

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-service
-  namespace: hotel-management-dev
+  namespace: hotel-dev
   labels:
     app: user-service
 spec:
@@ -15,11 +15,13 @@ spec:
       labels:
         app: user-service
     spec:
+      restartPolicy: Always
       containers:
         - name: user-service-app
           image: user-service-app
           ports:
             - containerPort: 8001
+              # protocol: TCP
           resources:
             limits:
               memory: "128Mi"
@@ -82,12 +84,12 @@ metadata:
   name: user-service
   labels:
     app: user-service
-  namespace: hotel-management-dev
+  namespace: hotel-dev
 spec:
   selector:
     app: user-service
   ports:
     - name: http
       protocol: TCP
-      port: 8001
+      port: 80
       targetPort: 8001

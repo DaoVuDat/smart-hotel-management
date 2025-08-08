@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
-  namespace: hotel-management-dev
+  namespace: hotel-dev
 data:
   APP_NAME: Hotel Management System
   APP_DESCRIPTION: A simple hotel management system
