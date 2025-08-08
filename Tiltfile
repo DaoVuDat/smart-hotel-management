@@ -1,6 +1,10 @@
 # Tiltfile
 # Hotel Management System Development Environment
-allow_k8s_contexts('k3d-k3s-cluster')
+allow_k8s_contexts('default')
+default_registry('localhost:5000')
+
+# Extension
+load('ext://helm_resource', 'helm_resource') 
 
 # Load Kubernetes YAML files
 k8s_yaml([
@@ -16,9 +20,33 @@ k8s_yaml([
   
 ])
 
+ns = 'hotel-management-dev'
+
+# k8s_resource(
+#     ns,
+#     labels=['infrastructure', 'setup']
+# )
+
+# Envoy APIGateway
+def deploy_envoy_api_gateway():
+    helm_resource(
+        name='envoy-gateway',
+        chart='oci://docker.io/envoyproxy/gateway-helm',
+        release_name='envoy-gateway',
+        namespace=ns, 
+        # flags=[
+        #     '--values=./k8s/development/helm/envoy-gateway-values.yaml'
+        # ]
+    )
+
+    # Add Envoy Gateway configuration
+    k8s_yaml('k8s/development/envoy.yaml')
+
+deploy_envoy_api_gateway()
+
 # User Service (Go)
 docker_build(
-    'user-service',
+    'user-service-app',
     './services/user-service',
     dockerfile='./services/user-service/Dockerfile',
     live_update=[
@@ -30,9 +58,11 @@ docker_build(
 k8s_yaml('k8s/development/user-service.yaml')
 k8s_resource(
     'user-service', 
-    port_forwards='8001:8001', 
+    port_forwards=[
+        '8001:8001',
+    ], 
     labels='services',
-    )
+)
 
 # Booking Service (Python)
 # docker_build(
@@ -163,7 +193,7 @@ k8s_resource('user-service', resource_deps=['user-db', 'user-db-migration'])
 
 print("Hotel Management System - Development Environment")
 print("=================================================")
-# print("Kong Gateway: http://localhost:8080")
+print("Envoy Gateway: http://localhost:8080")
 # print("Keycloak: http://localhost:8081")
 print("User Service: http://localhost:8001")
 # print("Booking Service: http://localhost:8002") 
