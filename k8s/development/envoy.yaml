@@ -42,3 +42,54 @@ spec:
             path:
               type: ReplacePrefixMatch
               replacePrefixMatch: /
+# ### KEYCLOAK ROUTE CONFIGURATION
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: keycloak-route
+#   namespace: hotel-dev
+# spec:
+#   parentRefs:
+#     - name: envoy-gateway
+#   rules:
+#     - matches:
+#         - path:
+#             type: PathPrefix
+#             value: /auth
+#       backendRefs:
+#         - group: ""
+#           kind: Service
+#           name: keycloak-service
+#           port: 80
+#       filters:
+#         - type: URLRewrite
+#           urlRewrite:
+#             path:
+#               type: ReplacePrefixMatch
+#               replacePrefixMatch: /
+
+# ### OIDC SECURITY POLICY FOR USER SERVICE
+# ---
+# apiVersion: gateway.envoyproxy.io/v1alpha1
+# kind: SecurityPolicy
+# metadata:
+#   name: oidc-policy
+#   namespace: hotel-dev
+# spec:
+#   targetSelectors:
+#     - group: gateway.networking.k8s.io
+#       kind: HTTPRoute
+#       matchLabels:
+#         app: user-service # Match HTTPRoute with this label
+#   oidc:
+#     provider:
+#       issuer: "http://keycloak-service.hotel-dev.svc.cluster.local/realms/hotel-realm"
+#       authorizationEndpoint: "http://keycloak-service.hotel-dev.svc.cluster.local/realms/hotel-realm/protocol/openid-connect/auth"
+#       tokenEndpoint: "http://keycloak-service.hotel-dev.svc.cluster.local/realms/hotel-realm/protocol/openid-connect/token"
+#       clientID: "hotel-api-client"
+#       clientSecret:
+#         name: oidc-client-secret
+#         key: client-secret
+#     redirectURL: "http://your-gateway-ip/oauth2/callback"
+#     logoutPath: "/logout"
